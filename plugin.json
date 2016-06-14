@@ -1,0 +1,11 @@
+{
+	"Name": "DockerManager",
+	"Maintainer": "Kunal Kushwaha <kunal.kushwaha@gmail.com>",
+	"Description": "Manage your docker containers",
+	"Icon": "",
+	"Usage": [
+		"DM which applications are running",
+		"DM build a wordpress service",
+		"DM can we scale <xyz> service?"
+	]
+}
