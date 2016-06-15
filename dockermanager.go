@@ -40,4 +40,10 @@ func init() {
 			},
 		},
 	}})
+	p.SM.SetOnReset(func(in *dt.Msg) {
+		//p.DeleteMemory(in, memKey)
+	})
+	if err = plugin.Register(p); err != nil {
+		p.Log.Fatalf("failed to register plugin plugin_dock. %s", err)
+	}
 }
