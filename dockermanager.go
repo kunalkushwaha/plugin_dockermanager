@@ -1,49 +1,58 @@
 package dockermanager
 
 import (
-	"log"
-
+	"github.com/itsabot/abot/core/log"
 	"github.com/itsabot/abot/shared/datatypes"
 	"github.com/itsabot/abot/shared/plugin"
 )
 
 var p *dt.Plugin
 
+const memKey = "firstToken"
+
 func init() {
-	// Create the plugin, setting it up to communicate with Abot through
-	// the functions we specified.
 	var err error
-	p, err = plugin.New("github.com/kunalkushwaha/plugin_dockermanager")
-	log.Println("In docker plugin")
+	p, err = plugin.New("github.com/kunalkushwaha/plugin_dock")
 	if err != nil {
-		log.Fatalln("failed to build plugin.", err)
+		log.Fatal("failed to build plugin plugin_dock", err)
 	}
-
-	// Trigger & Identifier objects
-	plugin.AppendTrigger(p, &dt.StructuredInput{
-		Commands: []string{"DM", "DockerManager", "Docker"},
-		Objects:  []string{"create", "list", "build"},
-	})
-
-	// State machine
+	plugin.SetKeywords(p,
+		dt.KeywordHandler{
+			Fn: kwDemo,
+			Trigger: &dt.StructuredInput{
+				Commands: []string{
+					"docker", "dm", "dockermanager",
+				},
+				Objects: []string{
+					"demo", "build", "list", "create",
+				},
+			},
+		},
+	)
 	plugin.SetStates(p, [][]dt.State{[]dt.State{
 		{
 			OnEntry: func(in *dt.Msg) string {
-				log.Println("In docker plugin OnEntry")
-				return "Hello world!"
+				return "This is a demo."
 			},
 			OnInput: func(in *dt.Msg) {
+				if len(in.Tokens) == 0 {
+					return
+				}
+				p.SetMemory(in, memKey, in.Tokens[0])
 			},
 			Complete: func(in *dt.Msg) (bool, string) {
-				log.Println("In docker plugin Complete")
-				return true, "Docker has performed!"
+				return p.HasMemory(in, memKey), "I didn't understand that."
 			},
 		},
 	}})
 	p.SM.SetOnReset(func(in *dt.Msg) {
-		//p.DeleteMemory(in, memKey)
+		p.DeleteMemory(in, memKey)
 	})
 	if err = plugin.Register(p); err != nil {
 		p.Log.Fatalf("failed to register plugin plugin_dock. %s", err)
 	}
+}
+
+func kwDemo(in *dt.Msg) string {
+	return "It worked! You typed: " + in.Sentence
 }
