@@ -14,13 +14,14 @@ func init() {
 	// the functions we specified.
 	var err error
 	p, err = plugin.New("github.com/kunalkushwaha/plugin_dockermanager")
+	log.Println("In docker plugin")
 	if err != nil {
 		log.Fatalln("failed to build plugin.", err)
 	}
 
 	// Trigger & Identifier objects
 	plugin.AppendTrigger(p, &dt.StructuredInput{
-		Commands: []string{"DM"},
+		Commands: []string{"DM", "DockerManager", "Docker"},
 		Objects:  []string{"create", "list", "build"},
 	})
 
@@ -28,12 +29,14 @@ func init() {
 	plugin.SetStates(p, [][]dt.State{[]dt.State{
 		{
 			OnEntry: func(in *dt.Msg) string {
+				log.Println("In docker plugin OnEntry")
 				return "Hello world!"
 			},
 			OnInput: func(in *dt.Msg) {
 			},
 			Complete: func(in *dt.Msg) (bool, string) {
-				return true, ""
+				log.Println("In docker plugin Complete")
+				return true, "Docker has performed!"
 			},
 		},
 	}})
